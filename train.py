@@ -9,7 +9,7 @@ def accuracy(y_true,y_pred):
     return acc
 
 # Training and Testing Steps & Loop functions
-def train_step(model,dataloader,loss_fn,accuracy,optimizer,device):
+def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
     model.train()
     train_loss, train_acc = 0,0
     for batch_num, (images,labels) in enumerate(dataloader):
@@ -29,12 +29,14 @@ def train_step(model,dataloader,loss_fn,accuracy,optimizer,device):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+    
+    scheduler.step()
 
-        # Average loss and accuracy across all batches
-        train_loss /= len(dataloader)
-        train_acc /= len(dataloader)
+    # Average loss and accuracy across all batches
+    train_loss /= len(dataloader)
+    train_acc /= len(dataloader)
 
-        return (train_loss,train_acc)
+    return (train_loss,train_acc)
 
 def val_step(model,dataloader,loss_fn,accuracy,device):
     model.eval()
@@ -69,7 +71,7 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
 
     return (val_loss,val_acc)
 
-def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,device):
+def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,scheduler,device):
     # Create empty results dict that keeps track of metrics per epoch
     results = {
         'train_loss':[],
@@ -80,7 +82,7 @@ def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,
     start_time = timer()
 
     for epoch in tqdm(range(epochs), desc='Training Model...'):
-        train_loss,train_acc = train_step(model,train_loader,loss_fn,accuracy,optimizer,device)
+        train_loss,train_acc = train_step(model,train_loader,loss_fn,accuracy,optimizer,scheduler,device)
         test_loss,test_acc = val_step(model,val_loader,loss_fn,accuracy,device)
 
         print(f'Epoch: {epoch+1}\n----------')
