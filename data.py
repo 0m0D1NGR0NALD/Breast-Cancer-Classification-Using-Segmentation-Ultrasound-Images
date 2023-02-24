@@ -18,6 +18,10 @@ images = [str(image_path) for image_path in image_paths if '_mask' not in str(im
 masks = [str(image_path) for image_path in image_paths if '_mask' in str(image_path)]
 labels = [os.path.split(os.path.split(name)[0])[1] for name in images]
 
+classes = list(set(labels))
+labels_dict = {label : i for i,label in enumerate(classes)}
+labels = [labels_dict[label_key] for label_key in labels]
+
 # Splitting data into train, test and validation set
 train_data,test_data,train_labels,test_labels = train_test_split(images,labels,test_size=0.15,shuffle=True,random_state=12)
 train_data,val_data,train_labels,val_labels = train_test_split(train_data,train_labels,test_size=0.15,shuffle=True,random_state=12)

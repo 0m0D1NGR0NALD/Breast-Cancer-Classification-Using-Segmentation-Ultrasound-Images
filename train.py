@@ -2,6 +2,8 @@ import torch
 from timeit import default_timer as timer
 from tqdm.notebook import tqdm
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def accuracy_fn(y_true,y_pred):
     correct = torch.eq(y_true,y_pred).sum().item()
     # How many of y_true == y_pred
@@ -12,7 +14,7 @@ def accuracy_fn(y_true,y_pred):
 def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
     model.train()
     train_loss, train_acc = 0,0
-    for batch_num, (images,labels) in enumerate(dataloader):
+    for images,labels in dataloader:
         images,labels = images.to(device),labels.to(device)
 
         # Forward Pass
@@ -36,7 +38,7 @@ def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
     train_loss /= len(dataloader)
     train_acc /= len(dataloader)
 
-    return (train_loss,train_acc)
+    return train_loss,train_acc
 
 def val_step(model,dataloader,loss_fn,accuracy,device):
     model.eval()
@@ -46,7 +48,7 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
 
     # Turn off gradient tracking
     with torch.inference_mode():
-        for batch_num, (images,labels) in enumerate(dataloader):
+        for images,labels in dataloader:
             images,labels = images.to(device),labels.to(device)
 
             # Forward Pass
@@ -69,7 +71,7 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
         val_loss /= len(dataloader)
         val_acc /= len(dataloader)
 
-    return (val_loss,val_acc)
+    return val_loss,val_acc
 
 def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,scheduler,device):
     # Create empty results dict that keeps track of metrics per epoch
@@ -96,6 +98,6 @@ def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,
     end_time = timer()
     print(f"Execution time 0n {device}: {format(end_time-start_time, '0.3f')} seconds.")
 
-    return (results,model)
+    return results,model
 
    
