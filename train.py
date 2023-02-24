@@ -2,7 +2,7 @@ import torch
 from timeit import default_timer as timer
 from tqdm.notebook import tqdm
 
-def accuracy(y_true,y_pred):
+def accuracy_fn(y_true,y_pred):
     correct = torch.eq(y_true,y_pred).sum().item()
     # How many of y_true == y_pred
     acc = (correct/len(y_pred))
