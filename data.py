@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split
 import os
 from PIL import Image
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 root_dir = 'Dataset/'
 path = Path(root_dir)
 
@@ -64,4 +66,10 @@ class Dataset(Dataset):
         return image, label
 
 
-train_dataset = Dataset()
+train_dataset = Dataset(images=train_data,labels=train_labels,transform=train_transforms)
+val_dataset = Dataset(images=val_data,labels=val_labels,transform=val_transforms)
+test_dataset = Dataset(images=test_data,labels=test_labels,transform=val_transforms)
+
+train_loader = DataLoader(train_dataset,batch_size=4,shuffle=True)
+val_loader = DataLoader(val_dataset,batch_size=4,shuffle=True)
+test_loader = DataLoader(test_dataset,batch_size=4,shuffle=False)
