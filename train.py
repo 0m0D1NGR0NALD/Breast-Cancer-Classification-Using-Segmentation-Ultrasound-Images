@@ -1,5 +1,6 @@
 import torch
-import data
+from timeit import default_timer as timer
+from tqdm.notebook import tqdm
 
 def accuracy(y_true,y_pred):
     correct = torch.eq(y_true,y_pred).sum().item()
@@ -68,5 +69,31 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
 
     return (val_loss,val_acc)
 
+def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,device):
+    # Create empty results dict that keeps track of metrics per epoch
+    results = {
+        'train_loss':[],
+        'train_acc':[],
+        'val_loss':[],
+        'val_acc':[]
+    }
+    start_time = timer()
 
+    for epoch in tqdm(range(epochs), desc='Training Model...'):
+        train_loss,train_acc = train_step(model,train_loader,loss_fn,accuracy,optimizer,device)
+        test_loss,test_acc = val_step(model,val_loader,loss_fn,accuracy,device)
 
+        print(f'Epoch: {epoch+1}\n----------')
+        print(f'Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}% | Val Loss: {test_loss:.4f} | Val Acc: {test_acc*100:.2f}%')
+
+        results['train_loss'].append(train_loss.item())
+        results['train_acc'].append(train_acc)
+        results['val_loss'].append(test_loss.item())
+        results['val_acc'].append(test_acc)
+    
+    end_time = timer()
+    print(f"Execution time 0n {device}: {format(end_time-start_time, '0.3f')} seconds.")
+
+    return (results,model)
+
+   
