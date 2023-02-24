@@ -1,10 +1,6 @@
 import torch
-import torchvision
-import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import models, transforms, utils
+from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms as T
 
 from pathlib import Path
 from sklearn.model_selection import train_test_split
@@ -25,10 +21,6 @@ labels = [os.path.split(os.path.split(name)[0])[1] for name in images]
 # Splitting data into train, test and validation set
 train_data,test_data,train_labels,test_labels = train_test_split(images,labels,test_size=0.15,shuffle=True,random_state=12)
 train_data,val_data,train_labels,val_labels = train_test_split(train_data,train_labels,test_size=0.15,shuffle=True,random_state=12)
-
-# Masks
-train_data_masks,test_data_masks,train_labels_masks,test_labels_masks = train_test_split(masks,labels,test_size=0.15,shuffle=True,random_state=12)
-train_data_masks,val_data_masks,train_labels_masks,val_labels_masks = train_test_split(train_data_masks,train_labels_masks,test_size=0.15,shuffle=True,random_state=12)
 
 # Transforms
 train_transforms = transforms.Compose([
