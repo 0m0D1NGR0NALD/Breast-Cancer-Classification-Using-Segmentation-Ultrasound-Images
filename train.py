@@ -4,14 +4,14 @@ from tqdm.notebook import tqdm
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def accuracy_fn(y_true,y_pred):
+def accuracy_fxn(y_true,y_pred):
     correct = torch.eq(y_true,y_pred).sum().item()
     # How many of y_true == y_pred
     acc = (correct/len(y_pred))
     return acc
 
 # Training and Testing Steps & Loop functions
-def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
+def train_step(model,dataloader,loss_fxn,accuracy,optimizer,scheduler,device):
     model.train()
     train_loss, train_acc = 0,0
     for images,labels in dataloader:
@@ -23,7 +23,7 @@ def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
         pred = torch.argmax(prob,dim=1)
 
         # Loss and Accuracy
-        loss = loss_fn(logit,labels)
+        loss = loss_fxn(logit,labels)
         train_loss += loss
         train_acc += accuracy(y_true=labels,y_pred=pred)
 
@@ -40,7 +40,7 @@ def train_step(model,dataloader,loss_fn,accuracy,optimizer,scheduler,device):
 
     return train_loss,train_acc
 
-def val_step(model,dataloader,loss_fn,accuracy,device):
+def val_step(model,dataloader,loss_fxn,accuracy,device):
     model.eval()
     val_loss,val_acc = 0,0
     target_labels = []
@@ -60,7 +60,7 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
             target_labels.append(labels.cpu())
 
             # Loss and Accuracy
-            loss = loss_fn(logit,labels)
+            loss = loss_fxn(logit,labels)
             val_loss += loss
             val_acc += accuracy(y_true=labels,y_pred=pred)
         
@@ -73,7 +73,7 @@ def val_step(model,dataloader,loss_fn,accuracy,device):
 
     return val_loss,val_acc
 
-def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,scheduler,device):
+def train_model(epochs,model,train_loader,val_loader,loss_fxn,accuracy,optimizer,scheduler,device):
     # Create empty results dict that keeps track of metrics per epoch
     results = {
         'train_loss':[],
@@ -84,8 +84,8 @@ def train_model(epochs,model,train_loader,val_loader,loss_fn,accuracy,optimizer,
     start_time = timer()
 
     for epoch in tqdm(range(epochs), desc='Training Model...'):
-        train_loss,train_acc = train_step(model,train_loader,loss_fn,accuracy,optimizer,scheduler,device)
-        test_loss,test_acc = val_step(model,val_loader,loss_fn,accuracy,device)
+        train_loss,train_acc = train_step(model,train_loader,loss_fxn,accuracy,optimizer,scheduler,device)
+        test_loss,test_acc = val_step(model,val_loader,loss_fxn,accuracy,device)
 
         print(f'Epoch: {epoch+1}\n----------')
         print(f'Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}% | Val Loss: {test_loss:.4f} | Val Acc: {test_acc*100:.2f}%')
