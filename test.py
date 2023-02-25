@@ -2,6 +2,7 @@ import torch
 from torchmetrics import Accuracy,Precision,Recall,F1Score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix,ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 import data
 import model
 

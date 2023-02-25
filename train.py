@@ -96,7 +96,7 @@ def train_model(epochs,model,train_loader,val_loader,loss_fxn,accuracy,optimizer
         results['val_acc'].append(test_acc)
     
     end_time = timer()
-    print(f"Execution time 0n {device}: {format(end_time-start_time, '0.3f')} seconds.")
+    print(f"Execution time on {device}: {format(end_time-start_time, '0.3f')} seconds.")
 
     return results,model
 
