@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import model
 
 def plot_loss_acc(results):
     epochs = [i for i in range(len(results['val_acc']))]
