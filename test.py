@@ -48,7 +48,7 @@ predicted_labels,predicted_probs = test_model(model,data.test_loader,device=devi
 test_accuracy = accuracy(predicted_labels, torch.Tensor(target_labels).type(dtype=torch.int))
 test_precision = precision(predicted_labels, torch.Tensor(target_labels).type(dtype=torch.int))
 test_recall = recall(predicted_labels, torch.Tensor(target_labels).type(dtype=torch.int))
-f1_score = f1_score(predicted_labels, torch.Tesor(target_labels).type(dtype=torch.int))
+f1_score = f1_score(predicted_labels, torch.Tensor(target_labels).type(dtype=torch.int))
 auc = roc_auc_score(target_labels, predicted_probs, multi_class='ovr')
 
 print(f"Test Accuracy: {test_accuracy.item():.4f}")
@@ -57,7 +57,7 @@ print(f"Test Recall: {test_recall.item():.4f}")
 print(f"F1 Score: {f1_score:.4f}")
 print(f"AUC: {auc:.4f}")
 
-cm = confusion_matrix(target_labels,prediction_labels,labels=[0,1,2])
+cm = confusion_matrix(target_labels,predicted_labels,labels=[0,1,2])
 disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels=['benign','normal','malignant'])
 disp.plot()
 plt.show()
