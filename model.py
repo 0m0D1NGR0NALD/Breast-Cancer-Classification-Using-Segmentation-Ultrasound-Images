@@ -12,18 +12,18 @@ epochs = 2
 
 weights = models.ResNet18_Weights.DEFAULT
 # Instatiate
-model_ft = models.resnet18(weights=weights)
+model = models.resnet18(weights=weights)
 # Get number of input features into linear layer
-num_ftrs = model_ft.fc.in_features
+features = model.fc.in_features
 # Modify classifier output shape 
-model_ft.fc = nn.Linear(num_ftrs, num_classes)
+model.fc = nn.Linear(features, num_classes)
 
-model_ft = model_ft.to(device)
+model = model.to(device)
 
 criterion = nn.CrossEntropyLoss()
-accuracy = train.accuracy_fn
+accuracy = train.accuracy_fxn
 
-optimizer = torch.optim.Adam(model_ft.parameters(),lr=0.0001)
+optimizer = torch.optim.Adam(model.parameters(),lr=0.0001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size=7,gamma=0.225)
 
-results,model = train.train_model(epochs,model_ft,data.train_loader,data.val_loader,criterion,train.accuracy_fn,optimizer,scheduler,device=device)
+results,model = train.train_model(epochs,model,data.train_loader,data.val_loader,criterion,train.accuracy_fxn,optimizer,scheduler,device=device)
