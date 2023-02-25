@@ -1,7 +1,9 @@
 import torch
-from torchmetrics import Precision,Recall,F1Score
+from torchmetrics import Accuracy,Precision,Recall,F1Score
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix,ConfusionMatrixDisplay
 import data
+import model
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -34,10 +36,12 @@ target_labels = []
 for img,label in data.test_dataset:
     target_labels.append(label)
 
-accuracy = Accuracy().to(device)
-precision = Precision().to(device)
-recall = Recall().to(device)
-f1_score = F1Score(num_classes=4)
+accuracy = Accuracy(task='multiclass',num_classes=3).to(device)
+precision = Precision(task='multiclass',num_classes=3).to(device)
+recall = Recall(task='multiclass',num_classes=3).to(device)
+f1_score = F1Score(task='multiclass',num_classes=3)
+
+model = model.model
 
 predicted_labels,predicted_probs = test_model(model,data.test_loader,device=device)
 
@@ -52,3 +56,8 @@ print(f"Test Precision: {test_precision.item():.4f}")
 print(f"Test Recall: {test_recall.item():.4f}")
 print(f"F1 Score: {f1_score:.4f}")
 print(f"AUC: {auc:.4f}")
+
+cm = confusion_matrix(target_labels,prediction_labels,labels=[0,1,2])
+disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels=['benign','normal','malignant'])
+disp.plot()
+plt.show()
